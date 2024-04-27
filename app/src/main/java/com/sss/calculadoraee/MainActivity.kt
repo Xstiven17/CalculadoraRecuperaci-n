@@ -1,91 +1,72 @@
 package com.sss.calculadoraee
 
+import android.icu.lang.UCharacter.GraphemeClusterBreak.V
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.sss.calculadoraee.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
 
-    private lateinit var txtCaja: EditText
+    private lateinit var binding: ActivityMainBinding
     private var operador: String = ""
     private var num1: String = ""
     private var num2: String = ""
+    private lateinit var txtcaja: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        txtCaja = findViewById(R.id.txtcaja)
+        val buttons = arrayOf(
+            binding.btnuno, binding.btndos, binding.btntres, binding.btncua,
+            binding.btncinco, binding.btnseis, binding.btnsie, binding.btnoch,
+            binding.btnnue, binding.cero, binding.btnMas, binding.btnmenos,
+            binding.btnMult, binding.btndiv, binding.btnigual, binding.btnElimNum,
+            binding.btnElimTodo
+        )
+
+        buttons.forEach { button ->
+            button.setOnClickListener(this)
+        }
+        txtcaja = binding.txtcaja
     }
 
-    fun bt1(view: View) {
-        txtCaja.append("1")
-    }
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.cero -> appendNumber("0")
+            R.id.btnuno -> appendNumber("1")
+            R.id.btndos -> appendNumber("2")
+            R.id.btntres -> appendNumber("3")
+            R.id.btncua -> appendNumber("4")
+            R.id.btncinco -> appendNumber("5")
+            R.id.btnseis -> appendNumber("6")
+            R.id.btnsie -> appendNumber("7")
+            R.id.btnoch -> appendNumber("8")
+            R.id.btnnue -> appendNumber("9")
+            R.id.btnMas -> setOperator("+")
+            R.id.btnmenos -> setOperator("-")
+            R.id.btnMult -> setOperator("*")
+            R.id.btndiv -> setOperator("/")
+            R.id.btnigual -> calculateResult()
+            R.id.btnElimNum -> borrar (V)
+            R.id.btnElimTodo -> clear(V)
 
-    fun bt2(view: View) {
-        txtCaja.append("2")
+        }
     }
-
-    fun bt3(view: View) {
-        txtCaja.append("3")
+    private fun appendNumber(number: String) {
+        binding.txtcaja.append(number)
     }
-
-    fun bt4(view: View) {
-        txtCaja.append("4")
+    private fun setOperator(operator: String) {
+        num1 = binding.txtcaja.text.toString()
+        binding.txtcaja.setText("")
+        this.operador = operator
     }
-
-    fun bt5(view: View) {
-        txtCaja.append("5")
-    }
-
-    fun bt6(view: View) {
-        txtCaja.append("6")
-    }
-
-    fun bt7(view: View) {
-        txtCaja.append("7")
-    }
-
-    fun bt8(view: View) {
-        txtCaja.append("8")
-    }
-
-    fun bt9(view: View) {
-        txtCaja.append("9")
-    }
-
-    fun bt0(view: View) {
-        txtCaja.append("0")
-    }
-
-    fun suma(view: View) {
-        num1 = txtCaja.text.toString()
-        txtCaja.setText("")
-        operador = "+"
-    }
-
-    fun resta(view: View) {
-        num1 = txtCaja.text.toString()
-        txtCaja.setText("")
-        operador = "-"
-    }
-
-    fun multiplicacion(view: View) {
-        num1 = txtCaja.text.toString()
-        txtCaja.setText("")
-        operador = "*"
-    }
-
-    fun division(view: View) {
-        num1 = txtCaja.text.toString()
-        txtCaja.setText("")
-        operador = "/"
-    }
-
-    fun igual(view: View) {
-        num2 = txtCaja.text.toString()
+    private fun calculateResult() {
+        num2 = binding.txtcaja.text.toString()
         var resultado = 0.0
         when (operador) {
             "+" -> resultado = num1.toDouble() + num2.toDouble()
@@ -93,18 +74,16 @@ class MainActivity : AppCompatActivity() {
             "*" -> resultado = num1.toDouble() * num2.toDouble()
             "/" -> resultado = num1.toDouble() / num2.toDouble()
         }
-        txtCaja.setText(resultado.toString())
+        binding.txtcaja.setText(resultado.toString())
     }
-
-    fun borrar(view: View) {
-        var cadena = txtCaja.text.toString()
+    fun borrar(view: Int) {
+        var cadena = txtcaja.text.toString()
         if (cadena.isNotEmpty()) {
             cadena = cadena.substring(0, cadena.length - 1)
-            txtCaja.setText(cadena)
+            txtcaja.setText(cadena)
         }
     }
-
-    fun clear(view: View) {
-        txtCaja.setText("")
+    fun clear(view: Int) {
+        txtcaja.setText("")
     }
 }
